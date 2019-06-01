@@ -1,7 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2814bf47-7d35-4630-aee0-ba0c27a4bbc1" name="Default Changelist" comment="" />
+    <list default="true" id="2814bf47-7d35-4630-aee0-ba0c27a4bbc1" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/create_embedding.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/face_recognizing.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/loss_def.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/save_embedding.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/createModel_tfkeras.py" beforeDir="false" afterPath="$PROJECT_DIR$/createModel_tfkeras.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/definition.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn1_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn1_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn2_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn2_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn3_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn3_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn3_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/bn3_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/conv1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/conv1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/conv2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/conv2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/conv3_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/conv3_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/dense_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/dense_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_1x1_bn_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_1x1_bn_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_1x1_bn_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_1x1_bn_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_1x1_conv_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_1x1_conv_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn1_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn1_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn2_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn2_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_bn2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_conv1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_conv1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_conv2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_3x3_conv2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn1_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn1_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn2_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn2_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_bn2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_conv1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_conv1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_conv2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_5x5_conv2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_pool_bn_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_pool_bn_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_pool_bn_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_pool_bn_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_pool_conv_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3a_pool_conv_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_1x1_bn_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_1x1_bn_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_1x1_bn_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_1x1_bn_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_1x1_conv_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_1x1_conv_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn1_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn1_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn2_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn2_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_bn2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_conv1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_conv1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_conv2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_3x3_conv2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn1_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn1_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn2_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn2_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_bn2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_conv1_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_conv1_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_conv2_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_5x5_conv2_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_pool_bn_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_pool_bn_m.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_pool_bn_v.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_pool_bn_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_pool_conv_b.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3b_pool_conv_w.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/weights/inception_3c_3x3_bn1_b.csv" beforeDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,35 +113,87 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/createModel_tfkeras.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="357" column="59" selection-start-line="357" selection-start-column="59" selection-end-line="357" selection-end-column="59" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/definition.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1800">
-              <caret line="128" column="16" selection-start-line="128" selection-start-column="9" selection-end-line="128" selection-end-column="16" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../OpenFace/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="209">
-              <caret line="11" selection-end-line="158" />
+              <caret line="14" column="28" selection-start-line="14" selection-start-column="28" selection-end-line="14" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-4110">
+              <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#96#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/create_embedding.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="773">
+              <caret line="51" column="10" selection-start-line="51" selection-start-column="10" selection-end-line="51" selection-end-column="10" />
+              <folding>
+                <element signature="e#1#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/save_embedding.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="437">
+              <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/face_recognizing.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="95" column="22" selection-start-line="95" selection-start-column="22" selection-end-line="95" selection-end-column="22" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/haarcascade_frontalface_default.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-216939" />
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loss_def.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="190">
+              <caret line="10" column="20" selection-start-line="10" selection-start-column="20" selection-end-line="10" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#48#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2293">
+              <caret line="130" column="29" selection-start-line="130" selection-start-column="29" selection-end-line="130" selection-end-column="29" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -57,12 +212,19 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>predict_on_batch</find>
       <find>recognize_face</find>
       <find>sess</find>
       <find>util</find>
       <find>weights</find>
+      <find>definition</find>
+      <find>Input</find>
+      <find>create_model</find>
+      <find>predict</find>
+      <find>predict_on_batch</find>
     </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -70,15 +232,23 @@
         <option value="$PROJECT_DIR$/createModel.py" />
         <option value="$PROJECT_DIR$/definition.py" />
         <option value="$PROJECT_DIR$/createModel_tfkeras.py" />
+        <option value="$PROJECT_DIR$/loss_def.py" />
+        <option value="$PROJECT_DIR$/train_face.py" />
+        <option value="$PROJECT_DIR$/save_embedding.py" />
+        <option value="$PROJECT_DIR$/model.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/create_embedding.py" />
+        <option value="$PROJECT_DIR$/face_recognizing.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="443" />
-    <option name="y" value="119" />
+    <option name="x" value="281" />
+    <option name="y" value="121" />
     <option name="width" value="1458" />
     <option name="height" value="911" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -92,6 +262,11 @@
               <item name="face_recognizer" type="b2602c69:ProjectViewProjectNode" />
               <item name="face_recognizer" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="face_recognizer" type="b2602c69:ProjectViewProjectNode" />
+              <item name="face_recognizer" type="462c0819:PsiDirectoryNode" />
+              <item name="train-images" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -99,7 +274,13 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\pjh39\Desktop\raspberrypi_smarthomeproject\face_recognizer" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -113,7 +294,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.face_recognizing">
     <configuration name="createModel" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="face_recognizer" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -126,7 +307,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="C:\Users\pjh39\Desktop\face_recognizer\createModel_tfkeras.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../face_recognizer/" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -135,6 +316,53 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="create_embedding" type="PythonConfigurationType" factoryName="Python">
+      <module name="face_recognizer" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/create_embedding.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="face_recognizing" type="PythonConfigurationType" factoryName="Python">
+      <module name="face_recognizer" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/face_recognizing.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.createModel" />
+      <item itemvalue="Python.create_embedding" />
+      <item itemvalue="Python.face_recognizing" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.createModel" />
@@ -155,7 +383,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="443" y="119" width="1458" height="911" extended-state="0" />
+    <frame x="692" y="130" width="1458" height="911" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19295774" />
@@ -163,7 +391,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32904884" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32818532" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -178,32 +406,78 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../OpenFace/utils.py">
+    <entry file="file://$PROJECT_DIR$/../OpenFace/utils.py" />
+    <entry file="file://$PROJECT_DIR$/train_face.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loss_def.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="11" selection-end-line="158" />
+        <state relative-caret-position="190">
+          <caret line="10" column="20" selection-start-line="10" selection-start-column="20" selection-end-line="10" selection-end-column="20" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#48#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/definition.py">
+    <entry file="file://$PROJECT_DIR$/save_embedding.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1800">
-          <caret line="128" column="16" selection-start-line="128" selection-start-column="9" selection-end-line="128" selection-end-column="16" />
+        <state relative-caret-position="437">
+          <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4110">
+          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#96#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/createModel_tfkeras.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="357" column="59" selection-start-line="357" selection-start-column="59" selection-end-line="357" selection-end-column="59" />
+        <state relative-caret-position="209">
+          <caret line="14" column="28" selection-start-line="14" selection-start-column="28" selection-end-line="14" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2293">
+          <caret line="130" column="29" selection-start-line="130" selection-start-column="29" selection-end-line="130" selection-end-column="29" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/haarcascade_frontalface_default.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-216939" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/create_embedding.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="773">
+          <caret line="51" column="10" selection-start-line="51" selection-start-column="10" selection-end-line="51" selection-end-column="10" />
+          <folding>
+            <element signature="e#1#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/face_recognizing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="95" column="22" selection-start-line="95" selection-start-column="22" selection-end-line="95" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
           </folding>
         </state>
       </provider>

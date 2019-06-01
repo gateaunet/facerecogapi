@@ -128,7 +128,7 @@ conv_shape = {
 
 def load_weights():
   # Set weights path
-  dirPath = './weights'
+  dirPath = './keras-openface/weights'
   fileNames = filter(lambda f: not f.startswith('.'), os.listdir(dirPath))
   paths = {}
   weights_dict = {}
