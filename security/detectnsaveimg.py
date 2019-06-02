@@ -5,25 +5,17 @@ import multiprocessing
 import os,shutil
 face_cascade = cv2.CascadeClassifier('/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml')
 eye_cascada = cv2.CascadeClassifier('/usr/local/share/OpenCV/haarcascades/haarcascade_eye.xml')
-
 cam = cv2.VideoCapture(0) # Create Camera Object(cam)
-
 datacount=0
 
-
 def facedetection():
-
     global datacount
-    print("얼굴 학습을 위한 얼굴 데이터를 구성합니다")
-    train_name=input("학습될 사람의 이름을 입력하세요:")
-    print("%s의 얼굴 학습을 시작합니다"%train_name)
-    
+    print("얼굴 인식을 위한 얼굴 데이터를 구성합니다. . ")
+    train_name=input("이름을 입력하세요:")
+    print("%s의 얼굴 인식 데이터생성을 시작합니다"%train_name)
     if os.path.exists("train-images/%s/"%train_name):
         shutil.rmtree("train-images/%s/"%train_name)
     os.makedirs("train-images/%s/"%train_name)
-
-    print("make dir")
-
     while True:
         _,frame = cam.read()
         #getfaceThread = threading.Thread(target=getface, args=(frame,))
@@ -31,10 +23,10 @@ def facedetection():
         #getfaceThread.join() #wait ROI frame data for getface()
         flag,ret=getface(frame)
         if flag == 1:                       
-            cv2.imwrite( "train-images/%s/frontface%d.jpg"%(train_name,datacount)  ,ret)
+            cv2.imwrite( "train-images/%s/frontface%d.jpg"%(train_name,datacount) ,ret)
             datacount +=1
         elif datacount>50 : 
-            print("학습이 종료되었습니다.")
+            print("데이터 수집이 종료되었습니다.")
             datacount=0
             return
         else: #face detect failed.
@@ -60,16 +52,13 @@ def getface(frame):
         return (1,cropframe)
 
     return (0,frame)
-     
-     
+
 def caminit():
     if cam.isOpened()==False: # cam check
         print("카메라가 인식되지 않습니다.")
 
 def main():
     facedetection()
-    
-    
 
 if __name__=='__main__':
     caminit()

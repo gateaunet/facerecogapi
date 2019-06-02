@@ -75,7 +75,7 @@ def recognize_faces_incam(embeddings):
                 cv2.putText(image, str(identity).title(), (x + 5, y - 5), font, 1, (150, 100, 150), 2)
         cv2.imshow("Face Recognizer", image)
         out.write(image)
-        if cv2.waitKey(100) & 0xFF == ord('q'):  # exit on q
+        if cv2.waitKey(10) & 0xFF == ord('q'):  # exit on q
             break
     cap.release()
     cv2.destroyAllWindows()
