@@ -3,8 +3,7 @@ import cv2
 import threading
 import multiprocessing
 import os,shutil
-face_cascade = cv2.CascadeClassifier('/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml')
-eye_cascada = cv2.CascadeClassifier('/usr/local/share/OpenCV/haarcascades/haarcascade_eye.xml')
+face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0) # Create Camera Object(cam)
 datacount=0
 

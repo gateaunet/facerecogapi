@@ -1,9 +1,9 @@
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras.layers import Input, Layer
-from model import create_model
+from modelModule
 
-nn4_small2 = create_model() # nn2_small2 아키텍쳐 불러오기(weight에 기록되어있으며, openface 에서
+nn4_small2 = modelModule.create_model() # nn2_small2 아키텍쳐 불러오기(weight에 기록되어있으며, openface 에서
                              # 정의한 아키텍쳐이다.
 ''' < 개인의견 >
     nn2_small2 모델에서는 일반 로스측정이 아니라, 트리플로스를 이용한 측정이 필요.

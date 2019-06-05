@@ -1,52 +1,47 @@
+from flask import Flask
+import flask
+from flask_restful import Resource, Api,reqparse
+from flask import request,render_template
+import cv2
+import glob
+import os
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.python.keras.layers import Input
 from tensorflow.python.keras.layers import Conv2D, ZeroPadding2D, Activation, Input, concatenate
 from tensorflow.python.keras.layers.core import Lambda, Flatten, Dense
 from tensorflow.python.keras.layers.normalization import BatchNormalization
 from tensorflow.python.keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
-import utils
 from utils import LRN2D
+import utils
+import urllib
+from urllib import request
+face_cascade= cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 def create_model(Input):
-    myInput = Input
-    # layer 1 convolution
-    x = ZeroPadding2D(padding=(3, 3), input_shape=(96, 96, 3))(myInput)  # 제로패딩, 상하좌우 3개 제로패딩.
-    x = Conv2D(64, (7, 7), strides=(2, 2), name='conv1')(x)  # 컨볼루션
-    x = BatchNormalization(axis=3, epsilon=0.00001, name='bn1')(x)  # 배치 정규화
-    x = Activation('relu')(x)  # activation func (Relu) 사용
-    # layer 1 pooling
-    x = ZeroPadding2D(padding=(1, 1))(x)  # 제로 패딩 생성
-    x = MaxPooling2D(pool_size=3, strides=2)(x)  # 최대값 풀링. 3x3 2칸씩
-    x = Lambda(LRN2D, name='lrn_1')(x)  # local response normalization (각 층에서의 출력값을 일정하게 조절)
-
-    # layer 2 convolution
+    x = ZeroPadding2D(padding=(3, 3), input_shape=(96, 96, 3))(Input)
+    x = Conv2D(64, (7, 7), strides=(2, 2), name='conv1')(x)
+    x = BatchNormalization(axis=3, epsilon=0.00001, name='bn1')(x)
+    x = Activation('relu')(x)
+    x = ZeroPadding2D(padding=(1, 1))(x)
+    x = MaxPooling2D(pool_size=3, strides=2)(x)
+    x = Lambda(LRN2D, name='lrn_1')(x)
     x = Conv2D(64, (1, 1), name='conv2')(x)
     x = BatchNormalization(axis=3, epsilon=0.00001, name='bn2')(x)
     x = Activation('relu')(x)
     x = ZeroPadding2D(padding=(1, 1))(x)
-    # layer 2 convolution 2
     x = Conv2D(192, (3, 3), name='conv3')(x)
     x = BatchNormalization(axis=3, epsilon=0.00001, name='bn3')(x)
     x = Activation('relu')(x)
-    # layer 2 nomalization
     x = Lambda(LRN2D, name='lrn_2')(x)
-
-    # layer 2 pooling
     x = ZeroPadding2D(padding=(1, 1))(x)
     x = MaxPooling2D(pool_size=3, strides=2)(x)
 
-    ''' issue : 인셉션게층으로 가기전3번의컨볼루션,2번의 풀링,2번의 최적화를 거친상태이며, 
-                layer1 에서 풀링후, 출력시 nomalization 을위해 LRN을 거쳐 출력되어 layer 2로 입력됨
-
-                layer2에서는 컨볼루션 과정을 두번하고, nomalization 후 풀링을 통해 인셉션 계층의 입력으로 .
-    '''
-
-    # 이제부터 인셉션 계층, ( GoogLeNet 참고 )
-    # 연산은 Dense 하지만 feature를 구하는 과정자체는 sparse 하다는게 특징.
-    # googlenet 모델 아키텍쳐는 (https://arxiv.org/pdf/1409.4842.pdf) 의 Table1 을 참고하면 좋을것 같다.
-
     # Inception3a
-    inception_3a_3x3 = Conv2D(96, (1, 1), name='inception_3a_3x3_conv1')(x)  # 1x1 커널크기의 96개의 필터출력 컨볼루션
+    inception_3a_3x3 = Conv2D(96, (1, 1), name='inception_3a_3x3_conv1')(x)
     inception_3a_3x3 = BatchNormalization(axis=3, epsilon=0.00001, name='inception_3a_3x3_bn1')(inception_3a_3x3)
     inception_3a_3x3 = Activation('relu')(inception_3a_3x3)
     inception_3a_3x3 = ZeroPadding2D(padding=(1, 1))(inception_3a_3x3)
@@ -237,12 +232,196 @@ def create_model(Input):
     reshape_layer = Flatten()(av_pool)
     dense_layer = Dense(128, name='dense_layer')(reshape_layer)
     norm_layer = Lambda(lambda x: K.l2_normalize(x, axis=1), name='norm_layer')(dense_layer)
-    model = Model(inputs=[myInput], outputs=norm_layer)
 
-    model_json = model.to_json()
-    with open("model.json", "w") as json_file:
-        json_file.write(model_json)
+    # Final Model
+    model = Model(inputs=[Input], outputs=norm_layer)
+
     return model
+
+
+# 학습용 이미지를 임베딩으로 변환하는 과정
+def image_to_embedding(image, model):
+    image = cv2.resize(image, (96, 96))
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    img = np.around(np.transpose(img, (0, 1, 2)) / 255.0, decimals=12)
+    img_array = np.array([img])
+    # 기학습된 모델에 이미지를 입력으로 이미지에 대한 embedding vector를 반환한다.
+    embeddings = model.predict_on_batch(img_array)
+    print("임베딩 변환과정중 임베딩:")
+    print(embeddings)
+    return embeddings
+
+# 학습 디렉토리에있는 이미지를 128-D 임베딩 벡터로 변환하여 inpurt_embeddings 객체 반환
+def create_input_image_embeddings(model):
+    input_embeddings = {}
+    for file in glob.glob("train-images/*"):
+        #확장명 없는 순수 파일명(이름)가져오기.
+        person_name = os.path.splitext(os.path.basename(file))[0]
+        image = cv2.imread(file, 1)
+        gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        #faces = face_cascade.detectMultiScale(gray_img, 1.2, 5)
+        input_embeddings[person_name] = image_to_embedding(gray_img, model)
+    return input_embeddings
+
+def initWeights(model):
+    # 기학습된 모델 가중치 불러오기.
+    weights = utils.weights
+    weights_dict = utils.load_weights()
+    # Set layer weights of the model
+    for name in weights:
+        print("가중치를 셋팅중입니다.")
+        if model.get_layer(name) != None:
+            model.get_layer(name).set_weights(weights_dict[name])
+        elif model.get_layer(name) != None:
+            model.get_layer(name).set_weights(weights_dict[name])
+
+    return model
+
+def initModel():
+    input = Input(shape=(96, 96, 3))
+    model =create_model(input)
+    return model
+
+
+def weightinit(model):
+    weights = utils.weights
+    weights_dict = utils.load_weights()
+    for name in weights:
+        if model.get_layer(name) != None:
+            model.get_layer(name).set_weights(weights_dict[name])
+        elif model.get_layer(name) != None:
+            model.get_layer(name).set_weights(weights_dict[name])
+
+
+# small2.nn2 모델 생성 및 기학습된 가중치 초기화.
+
+# 현재 얼굴 이미지를 임베딩 벡터화 시킴.
+def image_to_embedding(image, model):
+    image = cv2.resize(image, (96, 96))
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    img = np.around(np.transpose(img, (0, 1, 2)) / 255.0, decimals=12)
+    img_array = np.array([img])
+    print("오류검출 가즈아")
+    embedding = model.predict_on_batch(img_array)
+    return embedding
+
+
+# 두 얼굴간의 임베딩벡터 유클리드 공간 거리(유사도) 계산
+def recognize_face(face_image, embeddings, model):
+    face_embedding = image_to_embedding(face_image, model) # 현재 얼굴 이미지를 임베딩 벡터화.
+    min_dist = 150
+    Name = None
+    # Loop over  names and encodings.
+    for (name, embedding) in embeddings.items(): # 기학습된 임베딩 벡터 선형 탐색
+        # 벡터 간 거리계산(기학습된 임베딩과 현재 캠 얼굴 임베딩 간
+        dist = np.linalg.norm(face_embedding - embedding)
+        print('%s 와의 임베딩 벡터간 거리는 - [%s] ' % (name, dist))
+        if dist < min_dist:
+            min_dist = dist
+            Name = name
+    if min_dist <= 0.75:
+        return str(Name)
+    else:
+        return None
+
+
+def recognize_faces_incam(embeddings,username,stream_url,model):
+    count=0
+    font = cv2.FONT_HERSHEY_COMPLEX
+    # 라즈베리파이 카메라 실시간 영상을 받아온다.
+    print("웹캠의 요청 URL ="+stream_url)
+    while True:
+        url_response = urllib.request.urlopen("http://" + stream_url)
+        img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
+        image = cv2.imdecode(img_array, -1)
+        gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray_img, 1.3, 5)
+        # Loop through all the faces detected
+        for (x, y, w, h) in faces:
+            face = image[y:y + h, x:x + w]
+            identity = recognize_face(face, embeddings, model)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            if identity is not None: # 일치하는 임베딩벡터의 이름 발견될때.
+                cv2.rectangle(image, (x, y), (x + w, y + h), (100, 150, 150), 2)
+                cv2.putText(image, str(identity).title(), (x + 5, y - 5), font, 1, (150, 100, 150), 2)
+                print(username+" 의 얼굴이 인식되었습니다.")
+                if identity==username:
+                    count +=1
+        cv2.waitKey(10)
+        cv2.imshow('face Rec', image)
+        if count >10:
+            return True
+
+
+
+def load_embeddings():
+    input_embeddings = {}
+    embedding_file = np.load('embeddings.npy',allow_pickle = True)
+    # embeddings.npy 에는 전에 학습시켜둔 얼굴이 저장되어있다.
+    for k, v in embedding_file[()].items():
+        input_embeddings[k] = v
+    return input_embeddings
+
+
+
+
+
+
+
+app = Flask(__name__)
+api = Api(app)
+@app.route('/')
+def get():
+    return '<html><title>얼굴인식용 웹서버</title> <head><h1>[ 얼굴인식 웹서버 ]<br></h1></head><body><h3>서버가 정상 작동중입니다.</h3></body></html>'
+
+#얼굴인식 결과 get, json 요청에 json으로 응답한다.
+class FaceRecognize(Resource): #이 클래스는 새 쓰레드를 생성한다, 메인 쓰레드와 다르기때문에 케라스 그래프가 없다는것이다.
+    def get(self): # 결과
+        parser = reqparse.RequestParser() #요청파서 선언
+        parser.add_argument('username', type=str)
+        parser.add_argument('stream_url', type=str)
+        args = parser.parse_args()
+        _userName=args['username']
+        _streamUrl = args['stream_url']
+        with graph.as_default():
+            if recognize_faces_incam(embeddings,args['username'],args['stream_url'],facemodel):
+                 return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec':'True'}
+            else :
+                 return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
+
+api.add_resource(FaceRecognize,'/facerec')
+
+'''@app.route("/facerec", methods=["GET"])
+def predict():
+    # view로부터 반환될 데이터 딕셔너리를 초기화합니다.
+    data = {"success": False}
+    parser = reqparse.RequestParser()  # 요청파서 선언
+    parser.add_argument('username', type=str)
+    parser.add_argument('stream_url', type=str)
+    args = parser.parse_args()
+    _userName = args['username']
+    _streamUrl = args['stream_url']
+    if recognize_faces_incam(embeddings, args['username'], args['stream_url'], facemodel):
+        data={'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'True'}
+    else:
+        data={'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
+
+    # JSON 형식으로 데이터 딕셔너리를 반환합니다.
+    return flask.jsonify(data)
+'''
+
+if __name__=='__main__':
+    embeddings = load_embeddings()  # 내 얼굴 임베딩 벡터 로드
+    input = Input(shape=(96, 96, 3)) # placeholder 생성
+    global mymodel # 가중치 업로드 전의 뉴럴네트웍 모델
+    global facemodel # OpenFace 가중치 업로드 후의 128-D Openface 모델
+    mymodel = initModel() # 모델생성
+    print("[Neural Network Model Create OK.] ")
+    print("[OpenFace Weight load in Model OK.] ")
+    facemodel=initWeights(mymodel) # 가중치 초기화.
+    global graph
+    graph = tf.get_default_graph()
+    app.run(host='192.168.219.158',port=80)
 
 
 
