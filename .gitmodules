@@ -1,0 +1,3 @@
+[submodule "homeassistant"]
+	path = homeassistant
+	url = https://github.com/sngze/homeassistant.git
