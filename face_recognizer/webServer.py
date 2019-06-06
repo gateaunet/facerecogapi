@@ -16,7 +16,6 @@ from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
 from tensorflow.python.keras.models import load_model
 from tensorflow.python.keras.utils import plot_model
-
 import os
 os.environ["PATH"] += os.pathsep + 'D:/Program Files (x86)/Graphviz2.38/bin/'
 
@@ -269,19 +268,22 @@ def create_input_image_embeddings(model):
         input_embeddings[person_name] = image_to_embedding(gray_img, model)
     return input_embeddings
 
-def initWeights(model):
+def initWeights():
     # 기학습된 모델 가중치 불러오기.
+    global weights
+    global weights_dict
     weights = utils.weights
     weights_dict = utils.load_weights()
     # Set layer weights of the model
+    '''
     for name in weights:
         print("가중치를 셋팅중입니다.")
         if model.get_layer(name) != None:
             model.get_layer(name).set_weights(weights_dict[name])
         elif model.get_layer(name) != None:
             model.get_layer(name).set_weights(weights_dict[name])
-    K.clear_session()
-    return model
+    '''
+
 
 def initModel():
     input = Input(shape=(96, 96, 3))
@@ -298,7 +300,9 @@ def image_to_embedding(image):
     img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     img = np.around(np.transpose(img, (0, 1, 2)) / 255.0, decimals=12)
     img_array = np.array([img])
-    embedding = facemodel.predict_on_batch(img_array)
+    with tf_session.as_default():
+        with tf_graph.as_default():
+            embedding = facemodel.predict_on_batch(img_array)
     return embedding
 
 
@@ -326,6 +330,12 @@ def recognize_faces_incam(embeddings,username,stream_url):
     font = cv2.FONT_HERSHEY_COMPLEX
     # 라즈베리파이 카메라 실시간 영상을 받아온다.
     print("웹캠의 요청 URL ="+stream_url)
+    for name in weights:
+        print("가중치를 셋팅중입니다.")
+        if facemodel.get_layer(name) != None:
+            facemodel.get_layer(name).set_weights(weights_dict[name])
+        elif facemodel.get_layer(name) != None:
+            facemodel.get_layer(name).set_weights(weights_dict[name])
     while True:
         url_response = urllib.request.urlopen("http://" + stream_url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
@@ -335,6 +345,9 @@ def recognize_faces_incam(embeddings,username,stream_url):
         # Loop through all the faces detected
         for (x, y, w, h) in faces:
             print("면상이 인식됩니다")
+            print("--facerec 부분 모델확인--")
+            print(facemodel.summary())
+            print("--facerec 부분 모델확인--")
             face = image[y:y + h, x:x + w]
             identity = recognize_face(face, embeddings)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -359,7 +372,14 @@ def load_embeddings():
         input_embeddings[k] = v
     return input_embeddings
 
-
+def init():
+    # 내 얼굴 임베딩 벡터 로드
+    with tf_session.as_default():
+        with tf_graph.as_default():
+            mymodel = initModel()  # 모델생성
+            # mymodel=가중치 업로드 전의 뉴럴네트웍 모델
+            print("[Neural Network Model Create OK.] ")
+            print("[OpenFace Weight load in Model OK.] ")
 
 
 app = Flask(__name__)
@@ -372,45 +392,38 @@ def get():
 class FaceRecognize(Resource): #이 클래스는 새 쓰레드를 생성한다, 메인 쓰레드와 다르기때문에 케라스 그래프가 없다는것이다.
     K.clear_session()
     def get(self): # 결과
-        parser = reqparse.RequestParser() #요청파서 선언
-        parser.add_argument('username', type=str)
-        parser.add_argument('stream_url', type=str)
-        args = parser.parse_args()
-        _userName=args['username']
-        _streamUrl = args['stream_url']
-        print(facemodel.summary())
+        with tf_session.as_default():
+            with tf_graph.as_default():
+                parser = reqparse.RequestParser() #요청파서 선언
+                parser.add_argument('username', type=str)
+                parser.add_argument('stream_url', type=str)
+                args = parser.parse_args()
+                _userName=args['username']
+                _streamUrl = args['stream_url']
+                if recognize_faces_incam(embeddings,args['username'],args['stream_url']):
+                    return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec':'True'}
+                else :
+                    return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
 
-        if recognize_faces_incam(embeddings,args['username'],args['stream_url']):
-             return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec':'True'}
-        else :
-             return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
+api.add_resource(FaceRecognize, '/facerec')
 
-
-def init():
-          # 내 얼굴 임베딩 벡터 로드
-    mymodel = initModel()  # 모델생성
-    # mymodel=가중치 업로드 전의 뉴럴네트웍 모델
-    print("[Neural Network Model Create OK.] ")
-
-    print("[OpenFace Weight load in Model OK.] ")
-
-
-
-print('Model Saved in ./face_model.h5')
+tf_session = K.get_session()  # this creates a new session since one doesn't exist already.
+tf_graph = tf.get_default_graph()
 
 if __name__=='__main__':
-    api.add_resource(FaceRecognize, '/facerec')
-    embeddings = load_embeddings()
-    init()
-    deep_learning_model = load_model('face_model.h5')  # 저장된 모델 로딩
-  #  deep_learning_graph = tf.get_default_graph()
-    plot_model(deep_learning_model, './model_image.png') # 모델 시각화 이미지 저장
-    global facemodel
-    facemodel = initWeights(deep_learning_model)  # 가중치 초기화.
-    #facemodel - OpenFace 가중치 업로드 후의 128-D Openface 모델
-    #여기서 모델은 정상적임.
-
-app.run(host='192.168.219.158',port=80)
+    with tf_session.as_default():
+        with tf_graph.as_default():
+            embeddings = load_embeddings()
+            #  deep_learning_graph = tf.get_default_graph()
+            initWeights()
+            # 가중치만 메모리로 불러오기.
+            global facemodel
+            facemodel = load_model('face_model.h5')
+            # 저장된 모델 로딩
+            # facemodel - OpenFace 가중치 업로드 후의 128-D Openface 모델
+            # 여기서 모델은 정상적임.
+            plot_model(facemodel, './model_image.png')  # 모델 시각화 이미지 저장
+            app.run(host='192.168.219.158',port=80)
 
 
 
