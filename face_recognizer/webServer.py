@@ -5,7 +5,6 @@ from flask import request,render_template
 import cv2
 import glob
 import os
-
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.keras.layers import Input
@@ -15,6 +14,13 @@ from tensorflow.python.keras.layers.normalization import BatchNormalization
 from tensorflow.python.keras.layers.pooling import MaxPooling2D, AveragePooling2D
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
+from tensorflow.python.keras.models import load_model
+from tensorflow.python.keras.utils import plot_model
+
+import os
+os.environ["PATH"] += os.pathsep + 'D:/Program Files (x86)/Graphviz2.38/bin/'
+
+
 from utils import LRN2D
 import utils
 import urllib
@@ -188,7 +194,7 @@ def create_model(Input):
                                        cv2_out=384,
                                        cv2_filter=(3, 3),
                                        cv2_strides=(1, 1),
-                                       padding=(1, 1))
+    padding = (1, 1))
 
     inception_5a_pool = Lambda(lambda x: x ** 2, name='power2_5a')(inception_4e)
     inception_5a_pool = AveragePooling2D(pool_size=(3, 3), strides=(3, 3))(inception_5a_pool)
@@ -274,7 +280,7 @@ def initWeights(model):
             model.get_layer(name).set_weights(weights_dict[name])
         elif model.get_layer(name) != None:
             model.get_layer(name).set_weights(weights_dict[name])
-
+    K.clear_session()
     return model
 
 def initModel():
@@ -283,32 +289,22 @@ def initModel():
     return model
 
 
-def weightinit(model):
-    weights = utils.weights
-    weights_dict = utils.load_weights()
-    for name in weights:
-        if model.get_layer(name) != None:
-            model.get_layer(name).set_weights(weights_dict[name])
-        elif model.get_layer(name) != None:
-            model.get_layer(name).set_weights(weights_dict[name])
-
 
 # small2.nn2 모델 생성 및 기학습된 가중치 초기화.
 
 # 현재 얼굴 이미지를 임베딩 벡터화 시킴.
-def image_to_embedding(image, model):
+def image_to_embedding(image):
     image = cv2.resize(image, (96, 96))
     img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     img = np.around(np.transpose(img, (0, 1, 2)) / 255.0, decimals=12)
     img_array = np.array([img])
-    print("오류검출 가즈아")
-    embedding = model.predict_on_batch(img_array)
+    embedding = facemodel.predict_on_batch(img_array)
     return embedding
 
 
 # 두 얼굴간의 임베딩벡터 유클리드 공간 거리(유사도) 계산
-def recognize_face(face_image, embeddings, model):
-    face_embedding = image_to_embedding(face_image, model) # 현재 얼굴 이미지를 임베딩 벡터화.
+def recognize_face(face_image, embeddings):
+    face_embedding = image_to_embedding(face_image) # 현재 얼굴 이미지를 임베딩 벡터화.
     min_dist = 150
     Name = None
     # Loop over  names and encodings.
@@ -338,8 +334,9 @@ def recognize_faces_incam(embeddings,username,stream_url):
         faces = face_cascade.detectMultiScale(gray_img, 1.3, 5)
         # Loop through all the faces detected
         for (x, y, w, h) in faces:
+            print("면상이 인식됩니다")
             face = image[y:y + h, x:x + w]
-            identity = recognize_face(face, embeddings, facemodel)
+            identity = recognize_face(face, embeddings)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
             if identity is not None: # 일치하는 임베딩벡터의 이름 발견될때.
                 cv2.rectangle(image, (x, y), (x + w, y + h), (100, 150, 150), 2)
@@ -365,9 +362,6 @@ def load_embeddings():
 
 
 
-
-
-
 app = Flask(__name__)
 api = Api(app)
 @app.route('/')
@@ -376,39 +370,47 @@ def get():
 
 #얼굴인식 결과 get, json 요청에 json으로 응답한다.
 class FaceRecognize(Resource): #이 클래스는 새 쓰레드를 생성한다, 메인 쓰레드와 다르기때문에 케라스 그래프가 없다는것이다.
+    K.clear_session()
     def get(self): # 결과
-
         parser = reqparse.RequestParser() #요청파서 선언
         parser.add_argument('username', type=str)
         parser.add_argument('stream_url', type=str)
         args = parser.parse_args()
         _userName=args['username']
         _streamUrl = args['stream_url']
-        with graph.as_default():
-            if recognize_faces_incam(embeddings,args['username'],args['stream_url']):
-                 return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec':'True'}
-            else :
-                 return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
+        print(facemodel.summary())
 
-api.add_resource(FaceRecognize,'/facerec')
+        if recognize_faces_incam(embeddings,args['username'],args['stream_url']):
+             return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec':'True'}
+        else :
+             return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
 
 
-if __name__=='__main__':
-    embeddings = load_embeddings()  # 내 얼굴 임베딩 벡터 로드
-    input = Input(shape=(96, 96, 3)) # placeholder 생성
-    mymodel = initModel() # 모델생성
+def init():
+          # 내 얼굴 임베딩 벡터 로드
+    mymodel = initModel()  # 모델생성
     # mymodel=가중치 업로드 전의 뉴럴네트웍 모델
     print("[Neural Network Model Create OK.] ")
-    global facemodel
-    facemodel=initWeights(mymodel) # 가중치 초기화.
-    # facemodel - OpenFace 가중치 업로드 후의 128-D Openface 모델
-    print("[OpenFace Weight load in Model OK.] ")
-    global graph
-    graph=tf.get_default_graph
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
 
-    app.run(host='192.168.219.158',port=80)
+    print("[OpenFace Weight load in Model OK.] ")
+
+
+
+print('Model Saved in ./face_model.h5')
+
+if __name__=='__main__':
+    api.add_resource(FaceRecognize, '/facerec')
+    embeddings = load_embeddings()
+    init()
+    deep_learning_model = load_model('face_model.h5')  # 저장된 모델 로딩
+  #  deep_learning_graph = tf.get_default_graph()
+    plot_model(deep_learning_model, './model_image.png') # 모델 시각화 이미지 저장
+    global facemodel
+    facemodel = initWeights(deep_learning_model)  # 가중치 초기화.
+    #facemodel - OpenFace 가중치 업로드 후의 128-D Openface 모델
+    #여기서 모델은 정상적임.
+
+app.run(host='192.168.219.158',port=80)
 
 
 

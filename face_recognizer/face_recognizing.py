@@ -15,6 +15,7 @@ import utils
 import urllib
 face_cascade= cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+
 def weightinit(model):
     weights = utils.weights
     weights_dict = utils.load_weights()
@@ -33,7 +34,6 @@ def image_to_embedding(image, model):
     img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     img = np.around(np.transpose(img, (0, 1, 2)) / 255.0, decimals=12)
     img_array = np.array([img])
-    print("오류검출 가즈아")
     embedding = model.predict_on_batch(img_array)
     return embedding
 
@@ -74,6 +74,7 @@ def recognize_faces_incam(embeddings,username,stream_url,model,sess):
             face = image[y:y + h, x:x + w]
             identity = recognize_face(face, embeddings, model)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            print("얼굴검출")
             if identity is not None: # 일치하는 임베딩벡터의 이름 발견될때.
                 cv2.rectangle(image, (x, y), (x + w, y + h), (100, 150, 150), 2)
                 cv2.putText(image, str(identity).title(), (x + 5, y - 5), font, 1, (150, 100, 150), 2)
