@@ -325,7 +325,7 @@ def recognize_face(face_image, embeddings, model):
         return None
 
 
-def recognize_faces_incam(embeddings,username,stream_url,model):
+def recognize_faces_incam(embeddings,username,stream_url):
     count=0
     font = cv2.FONT_HERSHEY_COMPLEX
     # 라즈베리파이 카메라 실시간 영상을 받아온다.
@@ -339,7 +339,7 @@ def recognize_faces_incam(embeddings,username,stream_url,model):
         # Loop through all the faces detected
         for (x, y, w, h) in faces:
             face = image[y:y + h, x:x + w]
-            identity = recognize_face(face, embeddings, model)
+            identity = recognize_face(face, embeddings, facemodel)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
             if identity is not None: # 일치하는 임베딩벡터의 이름 발견될때.
                 cv2.rectangle(image, (x, y), (x + w, y + h), (100, 150, 150), 2)
@@ -377,6 +377,7 @@ def get():
 #얼굴인식 결과 get, json 요청에 json으로 응답한다.
 class FaceRecognize(Resource): #이 클래스는 새 쓰레드를 생성한다, 메인 쓰레드와 다르기때문에 케라스 그래프가 없다는것이다.
     def get(self): # 결과
+
         parser = reqparse.RequestParser() #요청파서 선언
         parser.add_argument('username', type=str)
         parser.add_argument('stream_url', type=str)
@@ -384,43 +385,29 @@ class FaceRecognize(Resource): #이 클래스는 새 쓰레드를 생성한다, 
         _userName=args['username']
         _streamUrl = args['stream_url']
         with graph.as_default():
-            if recognize_faces_incam(embeddings,args['username'],args['stream_url'],facemodel):
+            if recognize_faces_incam(embeddings,args['username'],args['stream_url']):
                  return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec':'True'}
             else :
                  return {'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
 
 api.add_resource(FaceRecognize,'/facerec')
 
-'''@app.route("/facerec", methods=["GET"])
-def predict():
-    # view로부터 반환될 데이터 딕셔너리를 초기화합니다.
-    data = {"success": False}
-    parser = reqparse.RequestParser()  # 요청파서 선언
-    parser.add_argument('username', type=str)
-    parser.add_argument('stream_url', type=str)
-    args = parser.parse_args()
-    _userName = args['username']
-    _streamUrl = args['stream_url']
-    if recognize_faces_incam(embeddings, args['username'], args['stream_url'], facemodel):
-        data={'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'True'}
-    else:
-        data={'username': args['username'], 'stream_url': args['stream_url'], 'face_rec': 'False'}
-
-    # JSON 형식으로 데이터 딕셔너리를 반환합니다.
-    return flask.jsonify(data)
-'''
 
 if __name__=='__main__':
     embeddings = load_embeddings()  # 내 얼굴 임베딩 벡터 로드
     input = Input(shape=(96, 96, 3)) # placeholder 생성
-    global mymodel # 가중치 업로드 전의 뉴럴네트웍 모델
-    global facemodel # OpenFace 가중치 업로드 후의 128-D Openface 모델
     mymodel = initModel() # 모델생성
+    # mymodel=가중치 업로드 전의 뉴럴네트웍 모델
     print("[Neural Network Model Create OK.] ")
-    print("[OpenFace Weight load in Model OK.] ")
+    global facemodel
     facemodel=initWeights(mymodel) # 가중치 초기화.
+    # facemodel - OpenFace 가중치 업로드 후의 128-D Openface 모델
+    print("[OpenFace Weight load in Model OK.] ")
     global graph
-    graph = tf.get_default_graph()
+    graph=tf.get_default_graph
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+
     app.run(host='192.168.219.158',port=80)
 
 
