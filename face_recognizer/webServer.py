@@ -275,14 +275,11 @@ def initWeights():
     weights = utils.weights
     weights_dict = utils.load_weights()
     # Set layer weights of the model
-    '''
     for name in weights:
-        print("가중치를 셋팅중입니다.")
-        if model.get_layer(name) != None:
-            model.get_layer(name).set_weights(weights_dict[name])
-        elif model.get_layer(name) != None:
-            model.get_layer(name).set_weights(weights_dict[name])
-    '''
+        if facemodel.get_layer(name) != None:
+            facemodel.get_layer(name).set_weights(weights_dict[name])
+        elif facemodel.get_layer(name) != None:
+            facemodel.get_layer(name).set_weights(weights_dict[name])
 
 
 def initModel():
@@ -329,13 +326,10 @@ def recognize_faces_incam(embeddings,username,stream_url):
     count=0
     font = cv2.FONT_HERSHEY_COMPLEX
     # 라즈베리파이 카메라 실시간 영상을 받아온다.
-    print("웹캠의 요청 URL ="+stream_url)
-    for name in weights:
-        print("가중치를 셋팅중입니다.")
-        if facemodel.get_layer(name) != None:
-            facemodel.get_layer(name).set_weights(weights_dict[name])
-        elif facemodel.get_layer(name) != None:
-            facemodel.get_layer(name).set_weights(weights_dict[name])
+    print("[유저의 얼굴인식 요청]")
+    print("유저 이름 = " + username)
+    print("요청된 유저 캠 이미지 URL ="+stream_url)
+    facecount=0
     while True:
         url_response = urllib.request.urlopen("http://" + stream_url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
@@ -344,23 +338,23 @@ def recognize_faces_incam(embeddings,username,stream_url):
         faces = face_cascade.detectMultiScale(gray_img, 1.3, 5)
         # Loop through all the faces detected
         for (x, y, w, h) in faces:
-            print("면상이 인식됩니다")
-            print("--facerec 부분 모델확인--")
-            print(facemodel.summary())
-            print("--facerec 부분 모델확인--")
+            facecount+=1
             face = image[y:y + h, x:x + w]
             identity = recognize_face(face, embeddings)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-            if identity is not None: # 일치하는 임베딩벡터의 이름 발견될때.
+            if identity is not None: # 임베딩 벡터의 발견될때.
                 cv2.rectangle(image, (x, y), (x + w, y + h), (100, 150, 150), 2)
                 cv2.putText(image, str(identity).title(), (x + 5, y - 5), font, 1, (150, 100, 150), 2)
-                print(username+" 의 얼굴이 인식되었습니다.")
-                if identity==username:
-                    count +=1
+                count +=1
+                print(count)
         cv2.waitKey(10)
         cv2.imshow('face Rec', image)
         if count >10:
+            cv2.destroyAllWindows()
             return True
+        if facecount >100:
+            cv2.destroyAllWindows()
+            return False
 
 
 
@@ -373,13 +367,11 @@ def load_embeddings():
     return input_embeddings
 
 def init():
-    # 내 얼굴 임베딩 벡터 로드
     with tf_session.as_default():
         with tf_graph.as_default():
             mymodel = initModel()  # 모델생성
-            # mymodel=가중치 업로드 전의 뉴럴네트웍 모델
+            # mymodel = 가중치 업로드 전의 뉴럴네트웍 모델
             print("[Neural Network Model Create OK.] ")
-            print("[OpenFace Weight load in Model OK.] ")
 
 
 app = Flask(__name__)
@@ -413,16 +405,17 @@ tf_graph = tf.get_default_graph()
 if __name__=='__main__':
     with tf_session.as_default():
         with tf_graph.as_default():
+            print("등록된 유저의 얼굴 데이터(embedding Vector)을 불러오는중..")
             embeddings = load_embeddings()
-            #  deep_learning_graph = tf.get_default_graph()
-            initWeights()
-            # 가중치만 메모리로 불러오기.
+            print("Success")
             global facemodel
+            print("얼굴인식 모델(N2.small.v2 model) 로딩중..")
             facemodel = load_model('face_model.h5')
-            # 저장된 모델 로딩
-            # facemodel - OpenFace 가중치 업로드 후의 128-D Openface 모델
-            # 여기서 모델은 정상적임.
-            plot_model(facemodel, './model_image.png')  # 모델 시각화 이미지 저장
+            print("Success")
+            print("얼굴인식 모델의 가중치 로드중..")
+            initWeights()
+            print("Success")
+            print("Flask 웹서버를 실행합니다..")
             app.run(host='192.168.219.158',port=80)
 
 

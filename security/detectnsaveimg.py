@@ -3,9 +3,15 @@ import cv2
 import threading
 import multiprocessing
 import os,shutil
+import dlib
+
+# author : 박재현
 face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0) # Create Camera Object(cam)
 datacount=0
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
 
 def facedetection():
     global datacount
@@ -32,25 +38,43 @@ def facedetection():
             print("얼굴이 인식되지 않습니다!",end='\r',flush=True)
         cv2.imshow("cam",ret)
         cv2.waitKey(10)
-    
+
+
+def shape_to_numpy_array(shape, dtype="int"):
+    # initialize the list of (x, y)-coordinates
+    coordinates = np.zeros((68, 2), dtype=dtype)
+
+    # loop over the 68 facial landmarks and convert them
+    # to a 2-tuple of (x, y)-coordinates
+    for i in range(0, 68):
+        coordinates[i] = (shape.part(i).x, shape.part(i).y)
+
+    # return the list of (x, y)-coordinates
+    return coordinates
         
 def getface(frame):    
     # camera type is VideoCapture
     # just show cam image and return current 1 frame        
     grayframe = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) # image binary
     faces = face_cascade.detectMultiScale(grayframe, 1.3, 5)
-    
-    for(x,y,w,h) in faces:
-        # get face ROI Rect position(x,y,w,h)
+    detected_faces = detector(grayframe, 1) # dlib 기반 detector
+    for rect in detected_faces: # i =person ,rect=which
         #frame = cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
-        
+        x = rect.left()
+        y = rect.top()
+        w = rect.right() - rect.left()
+        h = rect.bottom() - rect.top()
+
         cropframe = frame[y:y+h,x:x+w]
+        cropframe= cv2.resize(cropframe,(96,96), interpolation=cv2.INTER_AREA)
         #roi_gray = grayframe[y:y+h, x:x+w] #draw ROI to gray color frame 
         #roi_color = frame [y:y+h, x:x+w] # draw ROI to BGR color frame    
         print("얼굴 인식 중. .[%d%%]"% ((datacount/50)*100) ,end="\r",flush=True)
         return (1,cropframe)
 
     return (0,frame)
+
+
 
 def caminit():
     if cam.isOpened()==False: # cam check
