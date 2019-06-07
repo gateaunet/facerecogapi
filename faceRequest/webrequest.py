@@ -4,7 +4,7 @@ from multiprocessing.pool import ThreadPool
 import time
 import sys
 URL = "http://192.168.219.158:80/facerec"
-webcamStreamURL="192.168.219.163:8090/?action=snapshot"
+webcamStreamURL="192.168.219.142:8090/?action=snapshot"
 
 def faceAuthRequest(requestParams,retJson):
 	res = requests.get(URL,params=requestParams,timeout=20)
