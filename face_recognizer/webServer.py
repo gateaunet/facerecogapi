@@ -18,13 +18,21 @@ from tensorflow.python.keras.models import load_model
 from tensorflow.python.keras.utils import plot_model
 import os
 os.environ["PATH"] += os.pathsep + 'D:/Program Files (x86)/Graphviz2.38/bin/'
-
+import time
 
 from utils import LRN2D
 import utils
 import urllib
 from urllib import request
 face_cascade= cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+
+import sys
+import dlib
+
+predictor_model = "shape_predictor_68_face_landmarks.dat"
+detector = dlib.get_frontal_face_detector()
+
+face_pose_predictor = dlib.shape_predictor(predictor_model)
 
 def create_model(Input):
     x = ZeroPadding2D(padding=(3, 3), input_shape=(96, 96, 3))(Input)
@@ -329,30 +337,42 @@ def recognize_faces_incam(embeddings,username,stream_url):
     print("[유저의 얼굴인식 요청]")
     print("유저 이름 = " + username)
     print("요청된 유저 캠 이미지 URL ="+stream_url)
-    facecount=0
+    curTime = time.time()
+    fps=0
     while True:
         url_response = urllib.request.urlopen("http://" + stream_url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
         image = cv2.imdecode(img_array, -1)
         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray_img, 1.3, 5)
+        fps += 1
         # Loop through all the faces detected
         for (x, y, w, h) in faces:
-            facecount+=1
             face = image[y:y + h, x:x + w]
+            dets = detector(face, 1)  # 얼굴 디텍팅.
+            num_faces = len(dets)  # 찾은얼굴 개수
+            if num_faces == 0:
+                break;
+            faces_list = dlib.full_object_detections()
+            for detection in dets:
+                faces_list.append(face_pose_predictor(face, detection))  # 68-landmark특징점을 이용한 얼굴 정렬.
+            cropimage = dlib.get_face_chips(face, faces_list, size=96)
+            face = cropimage[0]
+
             identity = recognize_face(face, embeddings)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
             if identity is not None: # 임베딩 벡터의 발견될때.
                 cv2.rectangle(image, (x, y), (x + w, y + h), (100, 150, 150), 2)
                 cv2.putText(image, str(identity).title(), (x + 5, y - 5), font, 1, (150, 100, 150), 2)
                 count +=1
-                print(count)
+                print(identity+"가 인식되었습니다")
         cv2.waitKey(10)
+        cv2.putText(image, str(fps), (30,20), font, 1, (200, 251, 183), 2)
         cv2.imshow('face Rec', image)
         if count >10:
             cv2.destroyAllWindows()
             return True
-        if facecount >100:
+        if fps >240:
             cv2.destroyAllWindows()
             return False
 
@@ -416,7 +436,7 @@ if __name__=='__main__':
             initWeights()
             print("Success")
             print("Flask 웹서버를 실행합니다..")
-            app.run(host='192.168.219.158',port=80)
+            app.run(host='192.168.219.133',port=80)
 
 
 

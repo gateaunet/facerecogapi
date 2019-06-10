@@ -11,6 +11,15 @@ from tensorflow.python.keras.models import Model
 from tensorflow.python.keras import backend as K
 from utils import LRN2D
 import utils
+import sys
+import dlib
+
+predictor_model = "shape_predictor_68_face_landmarks.dat"
+detector = dlib.get_frontal_face_detector()
+
+face_pose_predictor = dlib.shape_predictor(predictor_model)
+
+
 
 
 def create_model(Input):
@@ -250,6 +259,19 @@ def create_input_image_embeddings(model):
         #확장명 없는 순수 파일명(이름)가져오기.
         person_name = os.path.splitext(os.path.basename(file))[0]
         image = cv2.imread(file, 1)
+        dets= detector(image,1) # 얼굴 디텍팅.
+        num_faces = len(dets) #찾은얼굴 개수
+        print(person_name+"의 학습이미지에서"+str(num_faces)+"개의 얼굴 발견")
+        if num_faces == 0:
+            print(person_name+"의 학습 이미지에서 얼굴을 찾지못했습니다")
+            exit()
+        faces = dlib.full_object_detections()
+        for detection in dets:
+            faces.append(face_pose_predictor(image,detection)) # 68-landmark특징점을 이용한 얼굴 정렬.
+        cropimage = dlib.get_face_chips(image,faces,size=96)
+        image = cropimage[0]
+        cv2.imshow('frame',image)
+        cv2.waitKey(0)
         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         #faces = face_cascade.detectMultiScale(gray_img, 1.2, 5)
         input_embeddings[person_name] = image_to_embedding(gray_img, model)
