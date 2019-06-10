@@ -132,10 +132,8 @@ def load_weights():
   fileNames = filter(lambda f: not f.startswith('.'), os.listdir(dirPath))
   paths = {}
   weights_dict = {}
-
   for n in fileNames:
     paths[n.replace('.csv', '')] = dirPath + '/' + n
-
   for name in weights:
     if 'conv' in name:
       conv_w = genfromtxt(paths[name + '_w'], delimiter=',', dtype=None)
@@ -155,6 +153,5 @@ def load_weights():
       dense_w = np.transpose(dense_w, (1, 0))
       dense_b = genfromtxt(dirPath+'/dense_b.csv', delimiter=',', dtype=None)
       weights_dict[name] = [dense_w, dense_b]
-
   return weights_dict
 
