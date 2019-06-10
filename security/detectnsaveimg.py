@@ -1,17 +1,13 @@
 import numpy as np
 import cv2
-import threading
-import multiprocessing
 import os,shutil
 import dlib
 
-# author : 박재현
 face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0) # Create Camera Object(cam)
 datacount=0
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-
 
 def facedetection():
     global datacount
@@ -73,7 +69,6 @@ def getface(frame):
         return (1,cropframe)
 
     return (0,frame)
-
 
 
 def caminit():
