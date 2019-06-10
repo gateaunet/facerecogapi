@@ -24,10 +24,9 @@ from utils import LRN2D
 import utils
 import urllib
 from urllib import request
-face_cascade= cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
-
 import sys
 import dlib
+face_cascade= cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 predictor_model = "shape_predictor_68_face_landmarks.dat"
 detector = dlib.get_frontal_face_detector()
@@ -52,7 +51,6 @@ def create_model(Input):
     x = Lambda(LRN2D, name='lrn_2')(x)
     x = ZeroPadding2D(padding=(1, 1))(x)
     x = MaxPooling2D(pool_size=3, strides=2)(x)
-
     # Inception3a
     inception_3a_3x3 = Conv2D(96, (1, 1), name='inception_3a_3x3_conv1')(x)
     inception_3a_3x3 = BatchNormalization(axis=3, epsilon=0.00001, name='inception_3a_3x3_bn1')(inception_3a_3x3)
@@ -358,7 +356,6 @@ def recognize_faces_incam(embeddings,username,stream_url):
                 faces_list.append(face_pose_predictor(face, detection))  # 68-landmark특징점을 이용한 얼굴 정렬.
             cropimage = dlib.get_face_chips(face, faces_list, size=96)
             face = cropimage[0]
-
             identity = recognize_face(face, embeddings)
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
             if identity is not None: # 임베딩 벡터의 발견될때.

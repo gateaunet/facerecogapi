@@ -228,17 +228,13 @@ def create_model(Input):
                                        cv1_out=256,
                                        cv1_filter=(1, 1))
     inception_5b = concatenate([inception_5b_3x3, inception_5b_pool, inception_5b_1x1], axis=3)
-
     av_pool = AveragePooling2D(pool_size=(3, 3), strides=(1, 1))(inception_5b)
     reshape_layer = Flatten()(av_pool)
     dense_layer = Dense(128, name='dense_layer')(reshape_layer)
     norm_layer = Lambda(lambda x: K.l2_normalize(x, axis=1), name='norm_layer')(dense_layer)
-
     # Final Model
     model = Model(inputs=[Input], outputs=norm_layer)
-
     return model
-
 
 # 학습용 이미지를 임베딩으로 변환하는 과정
 def image_to_embedding(image, model):
