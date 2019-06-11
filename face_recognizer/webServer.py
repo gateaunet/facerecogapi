@@ -337,6 +337,9 @@ def recognize_faces_incam(embeddings,username,stream_url):
     print("요청된 유저 캠 이미지 URL ="+stream_url)
     curTime = time.time()
     fps=0
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    writer = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
+
     while True:
         url_response = urllib.request.urlopen("http://" + stream_url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
@@ -366,11 +369,14 @@ def recognize_faces_incam(embeddings,username,stream_url):
         cv2.waitKey(10)
         cv2.putText(image, str(fps), (30,20), font, 1, (200, 251, 183), 2)
         cv2.imshow('face Rec', image)
+        writer.write(image)
         if count >10:
             cv2.destroyAllWindows()
+            writer.release()
             return True
         if fps >240:
             cv2.destroyAllWindows()
+            writer.release()
             return False
 
 
