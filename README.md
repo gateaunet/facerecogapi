@@ -1,4 +1,4 @@
-#[face recognition](https://github.com/jaehyunup/face_recognition_RestAPI)
+# [face recognition](https://github.com/jaehyunup/face_recognition_RestAPI)
 -----
 #### Directory
 - face_recognizer
