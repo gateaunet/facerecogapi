@@ -53,7 +53,6 @@ def create_input_image_embeddings(model):
         person_name = os.path.splitext(os.path.basename(file))[0]
         image = cv2.imread(file, 1)
         gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        #faces = face_cascade.detectMultiScale(gray_img, 1.2, 5)
         input_embeddings[person_name] = image_to_embedding(gray_img, model)
     return input_embeddings
 
@@ -77,8 +76,6 @@ def initModel():
     return model
 
 
-
-# small2.nn2 모델 생성 및 기학습된 가중치 초기화.
 
 # 현재 얼굴 이미지를 임베딩 벡터화 시킴.
 def image_to_embedding(image):
@@ -114,7 +111,6 @@ def recognize_face(face_image, embeddings):
 def recognize_faces_incam(embeddings,username,stream_url):
     count=0
     font = cv2.FONT_HERSHEY_COMPLEX
-    # 라즈베리파이 카메라 실시간 영상을 받아온다.
     print("[유저의 얼굴인식 요청]")
     print("유저 이름 = " + username)
     print("요청된 유저 캠 이미지 URL ="+stream_url)
@@ -122,7 +118,6 @@ def recognize_faces_incam(embeddings,username,stream_url):
     fps=0
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     writer = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
-
     while True:
         url_response = urllib.request.urlopen("http://" + stream_url)
         img_array = np.array(bytearray(url_response.read()), dtype=np.uint8)
